@@ -129,22 +129,18 @@ class node {
     // it, and returns a pointer so that it can be nullptr (if there is no such
     // key).
     node* value = static_cast<const node_ref&>(*m_pRef).get(key, pMemory);
-#ifdef YAML_CPP_SUPPORT_MERGE_KEYS
     if (!value || value->type() == NodeType::Undefined) {
       return get_value_from_merge_key(key, value, pMemory);
     }
-#endif
     return value;
   }
   template <typename Key>
   node& get(const Key& key, shared_memory_holder pMemory) {
     node& value = m_pRef->get(key, pMemory);
     value.add_dependency(*this);
-#ifdef YAML_CPP_SUPPORT_MERGE_KEYS
     if (value.type() == NodeType::Undefined) {
       return *get_value_from_merge_key(key, &value, pMemory);
     }
-#endif
     return value;
   }
   template <typename Key>
@@ -176,7 +172,6 @@ class node {
   }
 
  private:
-#ifdef YAML_CPP_SUPPORT_MERGE_KEYS
   template <typename Key>
   inline node* get_value_from_merge_key(const Key& key, node* currentValue,
                                         shared_memory_holder pMemory) const {
@@ -201,7 +196,6 @@ class node {
     }
     return currentValue;
   }
-#endif
 
   shared_node_ref m_pRef;
   using nodes = std::set<node*, less>;
